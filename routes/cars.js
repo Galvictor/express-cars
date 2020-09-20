@@ -1,8 +1,14 @@
 const router = require('express').Router();
 const Car = require('../model/Cars');
 
-router.get('/', (req, res) => {
-    res.send('Lista dos carros');
+router.get('/', async (req, res) => {
+    try {
+        const car = await Car.find().limit(10);
+        res.send(car);
+
+    } catch (err) {
+        res.status(400).send(err);
+    }
 });
 
 router.post('/create', async (req, res) => {
