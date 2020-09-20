@@ -1,10 +1,18 @@
 const router = require('express').Router();
 const User = require('../model/User');
-
-// todo Instalar o JOI para validação
-// todo link de referencia de exemplo https://youtu.be/2jqok-WgelI?t=1541, tem que instalar a nova versão do joi @hapi/joi esta defazado
+const {registerValidation} = require('../validation');
 
 router.post('/register', async (req, res) => {
+
+    // Valido os campos
+    const valido = await registerValidation(req.body);
+    if (valido.error) return res.status(400).send(valido.detalhes);
+
+    //Checar se o email já esta cadastrado
+    const emailExist = await User.findOne({email: req.body.email});
+    if (emailExist) return res.status(400).send('Email já existe');
+
+    // Criar novo usuario
     const user = new User({
         nome: req.body.nome,
         senha: req.body.senha,
