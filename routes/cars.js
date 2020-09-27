@@ -1,8 +1,9 @@
 const router = require('express').Router();
 const Car = require('../model/Cars');
 const {registerCarValidation} = require("../validation");
+const verificar = require('./verificartoken');
 
-router.get('/', async (req, res) => {
+router.get('/', verificar, async (req, res) => {
     try {
         const car = await Car.find().limit(10);
         res.send(car);
@@ -12,7 +13,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/create', async (req, res) => {
+router.post('/create', verificar, async (req, res) => {
 
     const valido = await registerCarValidation(req.body);
     if (valido.error) return res.status(400).send(valido.detalhes);
